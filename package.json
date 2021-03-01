@@ -1,0 +1,19 @@
+{
+  "name": "tku-classrooms-schedules-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cheerio": "^1.0.0-rc.5",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "qs": "^6.7.0"
+  }
+}
