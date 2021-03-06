@@ -3,6 +3,20 @@ import qs from 'qs';
 import cheerio from 'cheerio';
 import AuthCookiesManager from './AuthCookiesManager.js';
 
+export class NoDataError extends Error {
+  constructor(message = 'No Data', ...params) {
+    // Pass remaining arguments (including vendor specific ones) to parent constructor
+    super(message, ...params);
+
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, NoDataError);
+    }
+
+    this.name = 'NoDataError';
+  }
+}
+
 export default class ClassroomsSchedulesManager {
   /** @type {axios} */
   #axios = null;
@@ -44,7 +58,7 @@ export default class ClassroomsSchedulesManager {
     const $ = cheerio.load(response.data);
     const text = $('body > form > p:nth-child(9)').text();
     if (text.includes('查無') || text.includes('請指定教室')) {
-      throw new Error('No data');
+      throw new NoDataError();
     }
     /** @type {[{ symbol: string, description: string }]} */
     const symbols = $('body > form > p:nth-child(10) > table > tbody')
