@@ -1,14 +1,16 @@
 import Router from '@koa/router';
-import container from './middleware/container.js';
+import ServiceContainer from '../container/ServiceContainer.js';
+import middlewareContainer from './middleware/container.js';
 import createApiRouter from './api/index.js';
 
-export default () => {
-  const router = new Router();
+/** @type {(container: ServiceContainer) => Promise<Router>} */
+export default async (container) => {
+  const router = await container.resolve(Router);
 
-  router.use(container);
+  router.use(middlewareContainer);
 
   {
-    const apiRouter = createApiRouter();
+    const apiRouter = await createApiRouter(container);
     router.use('/api', apiRouter.routes(), apiRouter.allowedMethods());
   }
 

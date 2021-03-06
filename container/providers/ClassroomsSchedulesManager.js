@@ -1,15 +1,17 @@
 import ServiceContainer from '../ServiceContainer.js';
+import Cache from '../../utils/Cache.js';
 import AuthCookiesManager from '../../managers/AuthCookiesManager.js';
 import ClassroomsSchedulesManager from '../../managers/ClassroomsSchedulesManager.js';
 
 /** @type {(container: ServiceContainer) => void} */
-export const registerClassroomsSchedulesManager = (container) => {
+export default (container) => {
   container.singleton(
     ClassroomsSchedulesManager,
     async (container) =>
       new ClassroomsSchedulesManager({
         cookiesManager: await container.resolve(AuthCookiesManager),
         axios: await container.resolve('axios-for-tku-oa'),
+        cache: await container.resolve(Cache),
       })
   );
 };

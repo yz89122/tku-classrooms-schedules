@@ -10,13 +10,13 @@ export default class AuthCookiesManager {
   #cache = null;
 
   /**
-   * @param {{ cookiesTTL: number, axios: axios }} param0
+   * @param {{ cookiesTTL: number, axios: axios, cache: Cache }} param0
    */
   constructor({
-    cookiesTTL = AuthCookiesManager.COOKIES_TTL,
     axios: axiosInstance,
+    cache = new Cache({ defaultExpiration: AuthCookiesManager.COOKIES_TTL }),
   } = {}) {
-    this.#cache = new Cache({ defaultExpiration: cookiesTTL });
+    this.#cache = cache;
     this.#axios = axiosInstance;
   }
 

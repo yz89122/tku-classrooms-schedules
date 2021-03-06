@@ -3,7 +3,7 @@ import axios from 'axios';
 import ServiceContainer from '../ServiceContainer.js';
 
 /** @type {(container: ServiceContainer) => void} */
-export const registerAxiosForTkuOa = (container) => {
+export default (container) => {
   container.singleton('axios-for-tku-oa', () =>
     axios.create({
       baseURL: 'https://oa.tku.edu.tw/',

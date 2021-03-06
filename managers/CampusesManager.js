@@ -15,15 +15,16 @@ export default class CampusesManager {
   #cookiesManager;
 
   /**
-   * @param {{ cookiesManager: AuthCookiesManager, dataTTL: number, axios: axios }} param0
+   * @param {{ cookiesManager: AuthCookiesManager, dataTTL: number, axios: axios, cache: Cache }} param0
    */
   constructor({
     cookiesManager = null,
     dataTTL = CampusesManager.DATA_TTL,
     axios: axiosInstance,
+    cache = new Cache({ defaultExpiration: dataTTL }),
   } = {}) {
     this.#cookiesManager = cookiesManager || new AuthCookiesManager();
-    this.#cache = new Cache({ defaultExpiration: dataTTL });
+    this.#cache = cache;
     this.#axios = axiosInstance;
   }
 
