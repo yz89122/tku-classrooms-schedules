@@ -1,7 +1,7 @@
 import ServiceContainer from './ServiceContainer.js';
 import { registers } from './registers/index.js';
 
-export const newServiceContainer = () => {
+export const createServiceContainer = () => {
   const serviceContainer = new ServiceContainer();
 
   for (const register of registers) {

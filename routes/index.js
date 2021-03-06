@@ -1,15 +1,16 @@
-import express from 'express';
-import morgan from 'morgan';
+import Router from '@koa/router';
 import container from './middleware/container.js';
-import { newRoutes as newApiRoutes } from './api/index.js';
+import createApiRouter from './api/index.js';
 
-export const newRoutes = () => {
-  const router = express.Router();
+export default () => {
+  const router = new Router();
 
-  router.use(morgan('combined'));
   router.use(container);
 
-  router.use('/api', newApiRoutes());
+  {
+    const apiRouter = createApiRouter();
+    router.use('/api', apiRouter.routes(), apiRouter.allowedMethods());
+  }
 
   return router;
 };

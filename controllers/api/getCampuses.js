@@ -1,12 +1,12 @@
-import express from 'express';
+import Koa from 'koa';
 import ServiceContainer from '../../container/ServiceContainer.js';
 import CampusesManager from '../../managers/CampusesManager.js';
 
-/** @type {express.RequestHandler} */
-export default async (req, res) => {
+/** @type {Koa.Middleware} */
+export default async (ctx, next) => {
   /** @type {ServiceContainer} */
-  const container = res.locals.container;
+  const container = ctx.container;
   /** @type {CampusesManager} */
   const manager = await container.resolve(CampusesManager);
-  res.send(await manager.getCampuses());
+  ctx.body = await manager.getCampuses();
 };
