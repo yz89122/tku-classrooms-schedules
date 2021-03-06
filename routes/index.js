@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 import ServiceContainer from '../container/ServiceContainer.js';
+import middlewareCatchError from './middleware/catchError.js';
 import middlewareContainer from './middleware/container.js';
 import createApiRouter from './api/index.js';
 
@@ -7,6 +8,7 @@ import createApiRouter from './api/index.js';
 export default async (container) => {
   const router = await container.resolve(Router);
 
+  router.use(middlewareCatchError);
   router.use(middlewareContainer);
 
   {
