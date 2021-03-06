@@ -9,7 +9,7 @@ export default async (ctx, next) => {
   const container = ctx.container;
   /** @type {Cache} */
   const cache = await container.resolve('cache');
-  ctx.body = await cache.getOrElse(
+  ctx.response.body = await cache.getOrElse(
     'request:campuses',
     async () => {
       /** @type {CampusesManager} */
