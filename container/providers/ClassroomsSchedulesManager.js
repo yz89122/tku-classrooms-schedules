@@ -1,5 +1,4 @@
 import ServiceContainer from '../ServiceContainer.js';
-import Cache from '../../utils/Cache.js';
 import AuthCookiesManager from '../../managers/AuthCookiesManager.js';
 import ClassroomsSchedulesManager from '../../managers/ClassroomsSchedulesManager.js';
 
@@ -11,7 +10,6 @@ export default (container) => {
       new ClassroomsSchedulesManager({
         cookiesManager: await container.resolve(AuthCookiesManager),
         axios: await container.resolve('axios-for-tku-oa'),
-        cache: await container.resolve(Cache),
       })
   );
 };

@@ -1,42 +1,23 @@
 import axios from 'axios';
 import qs from 'qs';
 import cheerio from 'cheerio';
-import Cache from '../utils/Cache.js';
 import AuthCookiesManager from './AuthCookiesManager.js';
 
 export default class ClassroomsSchedulesManager {
-  static DATA_TTL = 60 * 1000;
-
   /** @type {axios} */
   #axios = null;
-  /** @type {Cache} */
-  #cache = null;
   /** @type {AuthCookiesManager} */
   #cookiesManager;
 
   /**
-   * @param {{ cookiesManager: AuthCookiesManager, dataTTL: number, axios: axios, cache: Cache }} param0
+   * @param {{ cookiesManager: AuthCookiesManager, axios: axios }} param0
    */
-  constructor({
-    cookiesManager = null,
-    dataTTL = ClassroomsSchedulesManager.DATA_TTL,
-    axios: axiosInstance,
-    cache = new Cache({ defaultExpiration: dataTTL }),
-  } = {}) {
+  constructor({ cookiesManager = null, axios: axiosInstance } = {}) {
     this.#cookiesManager = cookiesManager || new AuthCookiesManager();
-    this.#cache = cache;
     this.#axios = axiosInstance;
   }
 
-  async requestData({ campus, building, year, month, day }) {
-    return await this.#cache.getOrElse(
-      `${campus}/${building}/${year}/${month}/${day}`,
-      async () =>
-        await this.#requestData({ campus, building, year, month, day })
-    );
-  }
-
-  async #requestData({ campus, building, year, month, day }) {
+  async requestData({ campus, building, year, month, date }) {
     const response = await this.#axios.request({
       url: '/ClassRoom.nsf/ViewOperation?OpenForm',
       method: 'post',
@@ -54,7 +35,7 @@ export default class ClassroomsSchedulesManager {
         '%%Surrogate_TheBuilding': '1',
         TheYear: year,
         TheMonth: month,
-        TheDay: day,
+        TheDay: date,
         TheCampus: campus,
         TheBuilding: building,
       }),

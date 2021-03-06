@@ -13,7 +13,7 @@ export default async (container) => {
 
   router.get('/campuses', getCampuses);
   router.get(
-    '/campus/:campus/building/:building/:year-:month-:day',
+    '/campus/:campus/building/:building/:year-:month-:date',
     getClassroomsSchedules
   );
 

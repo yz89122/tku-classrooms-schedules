@@ -1,4 +1,5 @@
 import Koa from 'koa';
+import Cache from '../../utils/Cache.js';
 import ServiceContainer from '../../container/ServiceContainer.js';
 import CampusesManager from '../../managers/CampusesManager.js';
 
@@ -6,7 +7,15 @@ import CampusesManager from '../../managers/CampusesManager.js';
 export default async (ctx, next) => {
   /** @type {ServiceContainer} */
   const container = ctx.container;
-  /** @type {CampusesManager} */
-  const manager = await container.resolve(CampusesManager);
-  ctx.body = await manager.getCampuses();
+  /** @type {Cache} */
+  const cache = await container.resolve('cache');
+  ctx.body = await cache.getOrElse(
+    'request:campuses',
+    async () => {
+      /** @type {CampusesManager} */
+      const manager = await container.resolve(CampusesManager);
+      return await manager.requestCampuses();
+    },
+    5 * 1000
+  );
 };
