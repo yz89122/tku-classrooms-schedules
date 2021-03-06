@@ -107,7 +107,7 @@ export default class ServiceContainer {
 
   /**
    * @param {*} abstract
-   * @return {Binding}
+   * @return {Binding?}
    */
   #getBinding(abstract) {
     const aliasMap = this.#getAliasMap(abstract);
@@ -121,11 +121,6 @@ export default class ServiceContainer {
     if (this.#parent) {
       return this.#parent.#getBinding(abstract);
     }
-    throw new Error(
-      `Binding not found for {${
-        ServiceContainer.#isPrimitive(abstract) ? abstract : abstract.name
-      }}`
-    );
   }
 
   /**
@@ -230,15 +225,30 @@ export default class ServiceContainer {
    * @return {*}
    */
   async resolve(abstract, parameters = []) {
-    return await this.#getBinding(abstract).resolve(this, parameters);
+    const binding = this.#getBinding(abstract);
+    if (binding) {
+      return await binding.resolve(this, parameters);
+    }
+
+    if (typeof abstract == 'function') {
+      return new abstract(...parameters);
+    }
+
+    throw new Error(
+      `Binding not found for {${
+        ServiceContainer.#isPrimitive(abstract) ? abstract : abstract.name
+      }}`
+    );
   }
 
   resolved(abstract) {
-    return this.#getBinding(abstract).resolved;
+    const binding = this.#getBinding(abstract);
+    return binding ? binding.resolved : false;
   }
 
   isShared(abstract) {
-    return this.#getBinding(abstract).shared;
+    const binding = this.#getBinding(abstract);
+    return binding ? binding.shared : false;
   }
 
   /**
