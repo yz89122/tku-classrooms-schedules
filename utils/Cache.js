@@ -24,8 +24,10 @@ class Entry {
   }
 
   /**
-   * @param {() => Promise<*>} orElse
+   * @template T
+   * @param {() => Promise<T>} orElse
    * @param {number} expiration
+   * @return {Promise<T>}
    */
   async getOrElse(orElse, expiration = null) {
     if (!this.expired) {
@@ -100,9 +102,11 @@ export default class Cache {
   }
 
   /**
+   * @template T
    * @param {string} key
-   * @param {() => Promise<*>} callback
+   * @param {() => Promise<T>} callback
    * @param {number} expiration
+   * @return {Promise<T>}
    */
   async getOrElse(key, callback, expiration) {
     if (expiration === undefined) {

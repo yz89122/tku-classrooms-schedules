@@ -12,7 +12,6 @@ export default async (ctx, next) => {
   ctx.response.body = await cache.getOrElse(
     'request:campuses',
     async () => {
-      /** @type {CampusesManager} */
       const manager = await container.resolve(CampusesManager);
       return await manager.requestCampuses();
     },

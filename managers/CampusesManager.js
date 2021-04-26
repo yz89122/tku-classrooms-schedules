@@ -17,6 +17,9 @@ export default class CampusesManager {
     this.#axios = axiosInstance;
   }
 
+  /**
+   * @returns {Promise<[{key: string, text: string, buildings: [{key: string, text: string}]}]>}
+   */
   async requestCampuses() {
     const response = await this.#axios.request({
       url: '/ClassRoom.nsf/ViewOperation?OpenForm',
@@ -26,6 +29,7 @@ export default class CampusesManager {
       },
     });
     const $ = cheerio.load(response.data);
+    /** @type {[{key: string, text: string}]} */
     const campuses = $('select[name="TheCampus"]')
       .children('option')
       .map((index, element) => {
@@ -46,6 +50,10 @@ export default class CampusesManager {
     return campuses;
   }
 
+  /**
+   * @param {{key: string, text: string}} campus
+   * @return {Promise<[{key: string, text: string}]>}
+   */
   async requestBuildings(campus) {
     const response = await this.#axios.request({
       url: '/ClassRoom.nsf/ViewOperation?OpenForm',

@@ -16,7 +16,6 @@ export default async (ctx, next) => {
     ctx.response.body = await cache.getOrElse(
       `request:classrooms-schedules:campus:${params.campus}:building:${params.building}:${params.year}-${params.month}-${params.date}`,
       async () => {
-        /** @type {ClassroomsSchedulesManager} */
         const manager = await container.resolve(ClassroomsSchedulesManager);
         return await manager.requestData(params);
       },

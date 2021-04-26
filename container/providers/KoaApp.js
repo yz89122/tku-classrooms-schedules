@@ -5,7 +5,6 @@ import ServiceContainer from '../ServiceContainer.js';
 /** @type {(container: ServiceContainer) => void} */
 export default (container) => {
   container.singleton('koa-app', async (container) => {
-    /** @type {Koa} */
     const app = await container.resolve(Koa);
     /** @type {Router} */
     const router = await container.resolve('routes');

@@ -1,16 +1,19 @@
 import Lock from '../utils/Lock.js';
 
+/**
+ * @template T
+ */
 class Binding {
   #shared = false;
   #lock = new Lock();
-  /** @type {(container: ServiceContainer) => Promise<*>} */
+  /** @type {(container: ServiceContainer) => Promise<T>} */
   #concrete = undefined;
   #resolved = false;
   #instance = undefined;
   #hasInstance = false;
 
   /**
-   * @param {{ concrete: (container: ServiceContainer) => {}, instance: *, shared: boolean }} options
+   * @param {{ concrete: (container: ServiceContainer) => {}, instance: T, shared: boolean }} options
    */
   constructor(options) {
     if (options.hasOwnProperty('instance')) {
@@ -27,6 +30,7 @@ class Binding {
   /**
    * @param {ServiceContainer} container
    * @param {[*]} parameters
+   * @return {Promise<T>}
    */
   async resolve(container, parameters = []) {
     if (parameters.length) {
@@ -93,12 +97,20 @@ export default class ServiceContainer {
     return type != 'object' && type != 'function';
   }
 
+  /**
+   * @template T
+   * @param {new() => T} abstract
+   */
   #getAliasMap(abstract) {
     return ServiceContainer.#isPrimitive(abstract)
       ? this.#primitiveAliases
       : this.#weakMapAliases;
   }
 
+  /**
+   * @template T
+   * @param {new() => T} abstract
+   */
   #getBindingMap(abstract) {
     return ServiceContainer.#isPrimitive(abstract)
       ? this.#primitiveBindings
@@ -106,8 +118,9 @@ export default class ServiceContainer {
   }
 
   /**
-   * @param {*} abstract
-   * @return {Binding?}
+   * @template T
+   * @param {new() => T} abstract
+   * @return {Binding<T>?}
    */
   #getBinding(abstract) {
     const aliasMap = this.#getAliasMap(abstract);
@@ -124,7 +137,8 @@ export default class ServiceContainer {
   }
 
   /**
-   * @param {*} abstract
+   * @template T
+   * @param {new() => T} abstract
    * @return {boolean}
    */
   isAlias(abstract) {
@@ -141,7 +155,8 @@ export default class ServiceContainer {
   }
 
   /**
-   * @param {*} abstract
+   * @template T
+   * @param {new() => T} abstract
    * @param {*} alias
    */
   alias(abstract, alias) {
@@ -150,7 +165,8 @@ export default class ServiceContainer {
   }
 
   /**
-   * @param {*} abstract
+   * @template T
+   * @param {new() => T} abstract
    * @return {boolean}
    */
   bound(abstract) {
@@ -167,8 +183,9 @@ export default class ServiceContainer {
   }
 
   /**
-   * @param {*} abstract
-   * @param {(container: ServiceContainer) => Promise<*>} concrete
+   * @template T
+   * @param {new() => T} abstract
+   * @param {(container: ServiceContainer) => Promise<T>} concrete
    * @param {boolean} shared
    */
   bind(abstract, concrete, shared = false) {
@@ -180,8 +197,9 @@ export default class ServiceContainer {
   }
 
   /**
-   * @param {*} abstract
-   * @param {(container: ServiceContainer) => Promise<*>} concrete
+   * @template T
+   * @param {new() => T} abstract
+   * @param {(container: ServiceContainer) => Promise<T>} concrete
    * @param {boolean} shared
    */
   bindIf(abstract, concrete, shared = false) {
@@ -191,16 +209,18 @@ export default class ServiceContainer {
   }
 
   /**
-   * @param {*} abstract
-   * @param {(container: ServiceContainer) => Promise<*>} concrete
+   * @template T
+   * @param {new() => T} abstract
+   * @param {(container: ServiceContainer) => Promise<T>} concrete
    */
   singleton(abstract, concrete) {
     this.bind(abstract, concrete, true);
   }
 
   /**
-   * @param {*} abstract
-   * @param {(container: ServiceContainer) => Promise<*>} concrete
+   * @template T
+   * @param {new() => T} abstract
+   * @param {(container: ServiceContainer) => Promise<T>} concrete
    */
   singletonIf(abstract, concrete) {
     if (!this.bound(abstract)) {
@@ -209,8 +229,9 @@ export default class ServiceContainer {
   }
 
   /**
-   * @param {*} abstract
-   * @param {*} instance
+   * @template T
+   * @param {new() => T} abstract
+   * @param {T} instance
    */
   instance(abstract, instance) {
     this.#getBindingMap(abstract).set(
@@ -220,9 +241,10 @@ export default class ServiceContainer {
   }
 
   /**
-   * @param {*} abstract
+   * @template T
+   * @param {new() => T} abstract
    * @param {[*]} parameters
-   * @return {*}
+   * @return {Promise<T>}
    */
   async resolve(abstract, parameters = []) {
     const binding = this.#getBinding(abstract);
@@ -241,11 +263,21 @@ export default class ServiceContainer {
     );
   }
 
+  /**
+   * @template T
+   * @param {new() => T} abstract
+   * @return {boolean}
+   */
   resolved(abstract) {
     const binding = this.#getBinding(abstract);
     return binding ? binding.resolved : false;
   }
 
+  /**
+   * @template T
+   * @param {new() => T} abstract
+   * @return {boolean}
+   */
   isShared(abstract) {
     const binding = this.#getBinding(abstract);
     return binding ? binding.shared : false;

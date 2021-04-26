@@ -5,7 +5,6 @@ import getClassroomsSchedules from '../../controllers/api/getClassroomsSchedules
 
 /** @type {(container: ServiceContainer) => Promise<Router>} */
 export default async (container) => {
-  /** @type {Router} */
   const router = await container.resolve(Router);
 
   router.get('/campuses', getCampuses);
